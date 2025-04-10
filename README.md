@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmacia Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            function showSection(sectionId) {
+                document.querySelectorAll(".section").forEach(section => {
+                    section.classList.add("hidden");
+                });
+                document.getElementById(sectionId).classList.remove("hidden");
+            }
+
+            document.getElementById("userProfile").addEventListener("click", () => showSection("profileSection"));
+            document.getElementById("orderMeds").addEventListener("click", () => showSection("orderSection"));
+            document.getElementById("consultas").addEventListener("click", () => showSection("consultasSection"));
+            document.getElementById("historial").addEventListener("click", () => showSection("historialSection"));
+        });
+
+        function validateForm(event) {
+            event.preventDefault();
+            const nombre = document.getElementById("nombre").value.trim();
+            const apellidos = document.getElementById("apellidos").value.trim();
+            const dni = document.getElementById("dni").value.trim();
+            const direccion = document.getElementById("direccion").value.trim();
+
+            if (!nombre || !apellidos || !dni || !direccion) {
+                alert("Por favor, complete todos los campos.");
+                return false;
+            }
+
+            const dniRegex = /^[0-9]{8}[A-Z]$/i;
+            if (!dniRegex.test(dni)) {
+                alert("DNI no válido. Debe tener 8 números y una letra (ej: 12345678X).");
+                return false;
+            }
+
+            alert("Registro exitoso.");
+            return true;
+        }
+
+        function enviarConsulta() {
+            const input = document.getElementById("consultaInput");
+            const mensaje = input.value.trim();
+            if (mensaje) {
+                const chatBox = document.getElementById("chatBox");
+                const userMsg = document.createElement("p");
+                userMsg.className = "text-sm text-gray-600";
+                userMsg.textContent = `[Usuario]: ${mensaje}`;
+                chatBox.appendChild(userMsg);
+                input.value = "";
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // Simulación de respuesta automática
+                setTimeout(() => {
+                    const respuesta = document.createElement("p");
+                    respuesta.className = "text-sm text-gray-600";
+                    respuesta.textContent = `[Farmacéutico]: Gracias por su consulta. Le responderemos en breve.`;
+                    chatBox.appendChild(respuesta);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }, 1000);
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold mb-4">Farmacia Online</h1>
+        <nav class="space-y-2">
+            <button id="userProfile" class="w-full bg-gray-200 p-2 rounded">Perfil de Usuario</button>
+            <button id="orderMeds" class="w-full bg-gray-200 p-2 rounded">Pedir Medicamentos</button>
+            <button id="consultas" class="w-full bg-gray-200 p-2 rounded">Consultas Farmacéuticas</button>
+            <button id="historial" class="w-full bg-gray-200 p-2 rounded">Historial de Pedidos</button>
+        </nav>
+
+        <div id="profileSection" class="section hidden mt-4">
+            <h2 class="text-xl font-bold mb-4">Registro de Usuario</h2>
+            <form onsubmit="validateForm(event)" class="space-y-4">
+                <div>
+                    <label for="nombre" class="block font-medium">Nombre:</label>
+                    <input type="text" id="nombre" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label for="apellidos" class="block font-medium">Apellidos:</label>
+                    <input type="text" id="apellidos" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label for="dni" class="block font-medium">DNI:</label>
+                    <input type="text" id="dni" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label for="direccion" class="block font-medium">Dirección completa:</label>
+                    <textarea id="direccion" class="w-full p-2 border rounded" required></textarea>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Registrarse</button>
+            </form>
+        </div>
+
+        <div id="orderSection" class="section hidden mt-4">
+            <h2 class="text-xl font-bold mb-4">Pedir Medicamentos</h2>
+            <p class="mb-2">Seleccione los medicamentos que desea pedir:</p>
+            <form class="space-y-4">
+                <div class="flex items-center">
+                    <input type="checkbox" id="med1" class="mr-2">
+                    <label for="med1">Ibuprofeno (requiere receta)</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="med2" class="mr-2">
+                    <label for="med2">Paracetamol (sin receta)</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="med3" class="mr-2">
+                    <label for="med3">Omeprazol (requiere receta)</label>
+                </div>
+                <div>
+                    <label for="codigoReceta" class="block font-medium mt-2">Código de receta (si aplica):</label>
+                    <input type="text" id="codigoReceta" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block font-medium mt-2">Método de entrega:</label>
+                    <select class="w-full p-2 border rounded">
+                        <option>Envío a domicilio</option>
+                        <option>Recogida en farmacia</option>
+                    </select>
+                </div>
+                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Confirmar pedido</button>
+            </form>
+        </div>
+
+        <div id="consultasSection" class="section hidden mt-4">
+            <h2 class="text-xl font-bold mb-4">Consultas Farmacéuticas</h2>
+            <div class="mb-4">
+                <label class="block mb-1 font-medium">Simulación de chat:</label>
+                <div id="chatBox" class="bg-gray-100 p-4 rounded h-40 overflow-y-auto mb-2">
+                    <p class="text-sm text-gray-600">[Usuario]: Tengo una duda sobre el uso del ibuprofeno.</p>
+                    <p class="text-sm text-gray-600">[Farmacéutico]: Claro, ¿en qué puedo ayudarle?</p>
+                </div>
+                <input id="consultaInput" type="text" placeholder="Escriba su mensaje..." class="w-full p-2 border rounded">
+            </div>
+            <div>
+                <button onclick="enviarConsulta()" class="bg-blue-500 text-white px-4 py-2 rounded">Enviar mensaje</button>
+                <button class="bg-gray-500 text-white px-4 py-2 rounded ml-2">📹 Videollamada</button>
+            </div>
+        </div>
+
+        <div id="historialSection" class="section hidden mt-4">
+            <h2 class="text-xl font-bold mb-4">Historial de Pedidos</h2>
+            <div class="space-y-4">
+                <div class="p-4 border rounded bg-gray-50">
+                    <p><strong>Pedido #001</strong></p>
+                    <p>Estado: <span class="text-yellow-600 font-medium">En tramitación</span></p>
+                    <p>Medicamentos: Ibuprofeno, Omeprazol</p>
+                </div>
+                <div class="p-4 border rounded bg-gray-50">
+                    <p><strong>Pedido #002</strong></p>
+                    <p>Estado: <span class="text-green-600 font-medium">Enviado a domicilio</span></p>
+                    <p>Medicamentos: Paracetamol</p>
+                </div>
+                <div class="p-4 border rounded bg-gray-50">
+                    <p><strong>Pedido #003</strong></p>
+                    <p>Estado: <span class="text-blue-600 font-medium">Listo para recoger</span></p>
+                    <p>Medicamentos: Omeprazol</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
